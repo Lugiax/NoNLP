@@ -38,5 +38,5 @@ while True and n_pag<max_pags:
             df = df.append(_new_df, ignore_index=True)
     n_pag+=1
     df.to_pickle(db_filename)
-
+print(df.info())
 print(df.head())
