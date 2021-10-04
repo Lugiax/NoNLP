@@ -1,10 +1,10 @@
 import requests
-from prettyprinter import pprint
 from bs4 import BeautifulSoup
 import regex as re
 import string
 import spacy
 from spacy.lang.es import Spanish
+from spacy.tokenizer import Tokenizer
 from collections import Counter
 import os
 import pandas as pd
@@ -13,6 +13,7 @@ import numpy as np
 
 from utils import *
 from listas import *
+from objs import *
 
 
 """
@@ -24,52 +25,19 @@ https://docs.python.org/3/library/string.html
 https://blog.ekbana.com/nlp-for-beninners-using-spacy-6161cf48a229
 """
 
-nlp = spacy.load('es_core_news_sm')
+#nlp = spacy.load('es_core_news_lg')
+#tokenizer = Tokenizer(spacy.load('es_core_news_sm').vocab)
 
-#discursos_crudos={}
-#contador = None
-#palabras_glob = ''
-#discursos_glob = ''
-carpeta_registros = 'registros/'
 #Se cargan los datos de todas las mañaneras disponibles
-df = cargar_datos()
+#df = cargar_datos().iloc[:5]
 
-def generar_bd_palabras(df, db_filename='historico_palabras.pkl', guardar=False):
-    print('Generando palabras')
-    if os.path.isfile(db_filename):
-        historico = pd.read_pickle(db_filename)
-        print('Archivo leido...')
-    else:
-        historico = None
-        print('Historico creado')
-    n_entradas = 10#df.shape[0]
-    print(f'Procesando palabras de {db_filename}... ')
-    for i in range(n_entradas):
-        avance = int(i/n_entradas*100)
-        if avance%10==0:
-            print(f'\r Avance: {avance}%', end='')
-        serie = df.iloc[i]
-        if historico is not None and serie.fecha in historico.index:
-            continue
-        doc = tokenizar(serie.limpio)
-        cuenta = contar_palabras(doc, tipo='lemma')
-        _new_df = pd.DataFrame.from_records(cuenta, index=[serie.fecha])
-        if historico is None:
-            historico = _new_df
-        else:
-            historico = historico.append(_new_df)
-    print(' Terminado :D')
-    historico.fillna(0, inplace=True)
-    historico.sort_index(ascending=False)
-    if guardar: 
-        print(f'Guardando en {db_filename}')
-        historico.to_pickle(db_filename)
-    return(historico)
+hist_pal = cargar_datos('historicos/medios.pkl')
+frecs = hist_pal.sum()
+print(frecs)
+generar_nube_de_palabras({k:frecs[k].tolist() for k in frecs.index.tolist()})
+#vals.to_json('historico_palabras_interes.json', date_format='iso')
 
 
-
-hist = generar_bd_palabras(df)
-print(hist.head(10))
 
 """
 registros = glob(carpeta_registros+'*.txt')

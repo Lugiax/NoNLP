@@ -76,8 +76,8 @@ def contar_medios(doc, nlp=None, umbral=0.7):
             #print(f'Similitud entre {ent.text} y {medios[idx]} = {scores[idx]}')
             #print(list(zip(medios, scores)))
             if scores[idx]>umbral:
-                print(f'Similitud entre {ent.text} y {medios[idx]} = {scores[idx]}')
-                print(f'Se encontró:{medios[idx]}, {scores[idx]}')
+                #print(f'Similitud entre {ent.text} y {medios[idx]} = {scores[idx]}')
+                #print(f'Se encontró:{medios[idx]}, {scores[idx]}')
                 medios_encontrados.append(medios[idx].text)
     
     return Counter(medios_encontrados)
@@ -180,8 +180,8 @@ def generar_historico(df, funcs, nlp=None, guardar=False, entradas_max=None):
     steps = np.ceil(n_entradas/100)
     #print(f'Procesando palabras de {db_filename}... ')
     for i in range(n_entradas):
-        #if i%steps==0:
-        #    print(f'\r Avance: {int(i/n_entradas*100)}%', end='')
+        if i%steps==0:
+            print(f'\r Avance: {int(i/n_entradas*100)}%', end='')
         serie = df.iloc[i]
         for h, func in funcs.items(): 
             if hists[h] is not None and serie.fecha in hists[h].index:
@@ -196,7 +196,7 @@ def generar_historico(df, funcs, nlp=None, guardar=False, entradas_max=None):
             else:
                 hists[h] = hists[h].append(_new_df)
     
-    #print('\r Avance: 100% --- Terminado :D')
+    print('\r Avance: 100% --- Terminado :D')
     
     for h in hists.values():
         h.fillna(0, inplace=True)

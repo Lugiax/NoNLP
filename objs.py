@@ -111,7 +111,7 @@ function cambiar_grafica(){
     }
     else{
         boton.innerText = 'Cambiar a medios';
-        Plotly.newPlot('graph', data_palabras, layour_medios);
+        Plotly.newPlot('graph', data_palabras, layout_medios);
     }
     
 } 
